@@ -1,3 +1,22 @@
+<div align="center">
+
+# SOMIOD
+
+### Service Oriented Middleware for Interoperability and Open Data
+
+[![C#](https://img.shields.io/badge/Language-C%23-blue.svg)](https://docs.microsoft.com/en-us/dotnet/csharp/)
+[![.NET](https://img.shields.io/badge/Framework-.NET-512BD4.svg)](https://dotnet.microsoft.com/)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20App-0078D6.svg)](https://www.microsoft.com/windows)
+[![Domain](https://img.shields.io/badge/Domain-IoT-brightgreen.svg)](#)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+<br />
+
+A service-oriented RESTful middleware (**SOMIOD**) built with **C#** and **.NET** to tackle the "Silo of Things" problem in IoT environments. Provides a standardized resource hierarchy, dynamic REST API discovery, HTTP/MQTT notification subscriptions, and XML/XSD payload validation.
+
+</div>
+
+
 # SOMIOD IoT Middleware
 
 A RESTful middleware service for managing IoT resources and pushing notifications to subscribed endpoints. The project is built on **ASP.NET Web API (.NET Framework 4.8)** with **SQL Server** as the persistence layer and ships with two Windows Forms clients: a **Publisher** for browsing and managing resources, and a **Subscriber** for receiving notifications in real time.
