@@ -219,8 +219,6 @@ The connection string is read from `ProjetoIs.Properties.Settings.ConnectionStri
 
 ---
 
-## 👥 Authors
-
-Project developed at **IPLeiria**:
+## 👥 Author
 
 - José Branco 
