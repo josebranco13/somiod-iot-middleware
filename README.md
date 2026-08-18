@@ -223,9 +223,4 @@ The connection string is read from `ProjetoIs.Properties.Settings.ConnectionStri
 
 Project developed at **IPLeiria**:
 
-- Diogo Miguel Ferreira Gomes — `2221439@my.ipleiria.pt`
-- Francisco Xavier Gomes Silva — `2191613@my.ipleiria.pt`
-- João Miguel Martins Costa — `2160868@my.ipleiria.pt`
-- José Pedro Figueiredo Branco — `2221424@my.ipleiria.pt`
-
-See `identification.txt` for the full contributor list.
+- José Branco 
