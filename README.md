@@ -1,27 +1,103 @@
 <div align="center">
 
-# SOMIOD
+# 🌐 SOMIOD — IoT Middleware
 
-### Service Oriented Middleware for Interoperability and Open Data
+### Service-Oriented Middleware for Interoperability and Open Data
 
-[![C#](https://img.shields.io/badge/Language-C%23-blue.svg)](https://docs.microsoft.com/en-us/dotnet/csharp/)
-[![.NET](https://img.shields.io/badge/Framework-.NET-512BD4.svg)](https://dotnet.microsoft.com/)
-[![Platform](https://img.shields.io/badge/Platform-Windows%20App-0078D6.svg)](https://www.microsoft.com/windows)
-[![Domain](https://img.shields.io/badge/Domain-IoT-brightgreen.svg)](#)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-<br />
-
-A service-oriented RESTful middleware (**SOMIOD**) built with **C#** and **.NET** to tackle the "Silo of Things" problem in IoT environments. Provides a standardized resource hierarchy, dynamic REST API discovery, HTTP/MQTT notification subscriptions, and XML/XSD payload validation.
+![C#](https://img.shields.io/badge/C%23-512BD4?logo=csharp&logoColor=white)
+![.NET Framework](https://img.shields.io/badge/.NET_Framework-4.8-512BD4?logo=dotnet&logoColor=white)
+![ASP.NET Web API](https://img.shields.io/badge/ASP.NET-Web_API-5C2D91)
+![SQL Server](https://img.shields.io/badge/SQL_Server-CC2927)
+![MQTT](https://img.shields.io/badge/MQTT-660066)
+![REST API](https://img.shields.io/badge/REST-API-009688)
+[![MIT License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
 </div>
 
+---
 
-# SOMIOD IoT Middleware
+## 📖 Overview
 
-A RESTful middleware service for managing IoT resources and pushing notifications to subscribed endpoints. The project is built on **ASP.NET Web API (.NET Framework 4.8)** with **SQL Server** as the persistence layer and ships with two Windows Forms clients: a **Publisher** for browsing and managing resources, and a **Subscriber** for receiving notifications in real time.
+**SOMIOD (Service-Oriented Middleware for Interoperability and Open Data)** is an IoT middleware developed in **C# using ASP.NET Web API (.NET Framework 4.8)**, with **Microsoft SQL Server** for persistent storage.
 
-![Start page](img/start_page.png)
+The project addresses interoperability challenges in IoT environments by providing a centralized service for managing resources and exchanging information between applications.
+
+SOMIOD combines a **RESTful API** with event-driven notifications delivered through **HTTP webhooks and MQTT**, following a service-oriented architecture.
+
+The solution also includes two Windows Forms applications, **SomiodPublisher** and **SomiodSubscriber**, which demonstrate resource management and event-driven communication through a simulated smart-home environment.
+
+> 🎓 **Academic Project**
+>
+> Developed to explore IoT interoperability, service-oriented architectures, REST API development, relational databases, and event-driven communication.
+
+---
+
+## 🖥️ Application Preview
+
+![SOMIOD Publisher Interface](img/start_page.png)
+
+*Publisher interface for browsing and managing IoT resources through the SOMIOD middleware.*
+
+---
+
+## 🎯 Project Objectives
+
+The main objective is to provide a standardized communication layer between IoT applications, reducing the need for direct integration between individual components.
+
+The project focuses on:
+
+- **Interoperability:** Provide a common RESTful interface for IoT applications.
+- **Resource Management:** Organize IoT resources using a hierarchical model.
+- **Data Persistence:** Store and retrieve resources using Microsoft SQL Server.
+- **Event-Driven Communication:** Deliver notifications through HTTP and MQTT.
+- **Resource Discovery:** Discover resources using a custom HTTP header.
+- **Data Validation:** Validate and persist notification records using XML/XSD.
+- **Practical Demonstration:** Simulate smart-home devices through dedicated Publisher and Subscriber applications.
+
+
+---
+
+## 🏗️ System Architecture
+
+SOMIOD follows a service-oriented architecture that enables communication between IoT applications through a centralized RESTful API and an event-driven notification system.
+
+The architecture consists of the middleware, a SQL Server database, HTTP/MQTT notification services, and two Windows Forms demonstration clients.
+
+```mermaid
+flowchart TB
+    P["SomiodPublisher<br/>(Windows Forms)"]
+    API["SOMIOD Middleware<br/>(ASP.NET Web API)"]
+    DB[("Microsoft SQL Server")]
+    N["NotificationService"]
+    MQTT["MQTT Broker"]
+    HTTP["HTTP Webhook Endpoint"]
+    S["SomiodSubscriber<br/>(Windows Forms)"]
+    XML["XML Records<br/>(XSD Validation)"]
+    DEV["Simulated Smart-Home Devices"]
+
+    P -->|"REST / JSON"| API
+    API <-->|"SQL"| DB
+    API --> N
+    N -->|"MQTT Publish"| MQTT
+    N -->|"HTTP POST"| HTTP
+    MQTT -->|"Event Notifications"| S
+    S -->|"REST GET"| API
+    S --> XML
+    S --> DEV
+```
+
+### Architecture Components
+
+- **SomiodPublisher:** Windows Forms client responsible for managing resources and publishing device commands through REST requests.
+- **SOMIOD Middleware:** ASP.NET Web API that manages the hierarchical resource model, processes requests, and handles subscriptions.
+- **Microsoft SQL Server:** Relational database used to persist applications, containers, content instances, and subscriptions.
+- **NotificationService:** Processes supported resource events and distributes notifications through HTTP or MQTT.
+- **MQTT Broker:** Enables asynchronous communication between the middleware and subscribed clients.
+- **HTTP Webhooks:** Allow event notifications to be delivered to registered HTTP endpoints.
+- **SomiodSubscriber:** Windows Forms client that receives MQTT notifications, retrieves resource information, and processes supported device commands.
+- **XML/XSD:** Used by the Subscriber to validate and store notification records.
+- **Simulated Smart-Home Devices:** Graphical representations of lights, doors, and blinds controlled through received commands.
+
 
 ---
 
@@ -29,37 +105,47 @@ A RESTful middleware service for managing IoT resources and pushing notification
 
 - **Resource hierarchy** — `Application` → `Container` → `Content Instance`, plus `Subscription` resources attached to containers.
 - **Discovery via custom HTTP header** — clients send `somiod-discovery: <resource-type>` to list children of any resource in the hierarchy.
-- **CRUD over REST** — full GET / POST / PUT / DELETE on every resource type, returning JSON payloads with snake-case field names (`resource-name`, `res-type`, `creation-datetime`, etc.).
+- **RESTful resource management** — Supports resource-specific CRUD operations, using JSON payloads with hyphen-separated property names (e.g., `resource-name`, `res-type`, and `creation-datetime`).
 - **Push notifications** — when a `content-instance` is created or deleted, the middleware fans the event out to every matching subscription endpoint, over either **HTTP (webhook)** or **MQTT (publish/subscribe)**.
-- **Notification filtering** — each subscription carries an `evt` bitmask (`1 = creation`, `2 = deletion`) so subscribers can opt into only the events they care about.
-- **Two demo clients** — `SomiodPublisher` and `SomiodSubscriber` Windows Forms apps that exercise every endpoint of the API in a real smart-home scenario (lights, doors, blinds, etc.).
+- **Notification filtering** — Subscriptions use an `evt` field to select creation (`1`) or deletion (`2`) events. The API also recognizes `3` as a combined-event option, although the published SQL schema currently restricts stored values to `1` or `2`.
+- **Demonstration clients** — Two Windows Forms applications, `SomiodPublisher` and `SomiodSubscriber`, demonstrate resource management and event-driven communication in a simulated smart-home environment.
+
 
 ---
 
-## 📦 Project layout
 
-```
+## 📁 Repository Structure
+
+```text
 somiod-iot-middleware/
-├── ProjetoIs/                # ASP.NET Web API service (the middleware)
-│   ├── Controllers/          # application, container, content-instance, subscription
-│   ├── Models/               # Entity classes mapped to SQL tables
-│   ├── Services/             # NotificationService (MQTT + HTTP fan-out)
-│   ├── App_Start/            # WebApiConfig (attribute routing)
-│   └── ...
-├── TestApplications/         # WinForms "SomiodPublisher" client
-│   ├── Form1.cs              # Resource tree view + per-container actions
-│   ├── CreateApp.cs          # Application create / delete form
-│   └── ...
-├── SomiodSubscriber/         # WinForms MQTT subscriber client
-│   ├── Form1.cs              # Notification handler + device-state simulation
-│   └── Services/             # MqttListener, NotificationXmlService
-├── application.sql           # SQL schema: application table
-├── container.sql             # SQL schema: container table
-├── content-instance.sql      # SQL schema: content-instance table
-├── subscription.sql          # SQL schema: subscription table
-├── identification.txt        # Project authors
-└── img/                      # Screenshots used in this README
+│
+├── ProjetoIs/
+│   ├── Controllers/
+│   ├── Models/
+│   ├── Services/
+│   ├── App_Start/
+│   └── Web.config
+│
+├── TestApplications/
+│   └── SomiodPublisher source code
+│
+├── SomiodSubscriber/
+│   └── SomiodSubscriber source code
+│
+├── img/
+│   └── Application screenshots
+│
+├── application.sql
+├── container.sql
+├── content-instance.sql
+├── subscription.sql
+│
+├── ProjetoIs.sln
+├── .gitignore
+├── LICENSE
+└── README.md
 ```
+
 
 ---
 
@@ -78,9 +164,16 @@ Every resource inherits the base fields defined in `Models/common.cs`:
 ```
 Application  (e.g. "smarthouse")
 └── Container        (e.g. "door-livingroom", "light", "blind-kitchen")
-    ├── Content Instance   (one reading/state of a device)
+    ├── Content Instance   (Stores device data, readings, or commands within a container.)
     └── Subscription       (push target for that container's events)
 ```
+
+Applications contain Containers, while each Container
+can contain Content Instances and Subscriptions.
+
+Content Instances store data or commands, whereas
+Subscriptions define event filters and notification
+delivery endpoints.
 
 - `container.application-resource-name` is a foreign key back to the parent `Application`.
 - `content-instance.container-resource-name` is a foreign key to the parent `Container`.
@@ -90,19 +183,139 @@ Application  (e.g. "smarthouse")
 
 ---
 
-## 🔌 HTTP API
 
-All routes share the prefix `api/somiod` (see `ProjetoIs/Controllers/applicationController.cs`). The middleware listens on `http://localhost:58066` by default.
+## 🚀 Getting Started
 
-| Method | Route | Description |
-|---|---|---|
-| `GET`  | `/api/somiod`                       | List applications (default) **or** any other resource type when `somiod-discovery` header is supplied. |
-| `GET`  | `/api/somiod/{application}`         | Get an application, **or** discover its containers / content-instances / subscriptions via `somiod-discovery`. |
-| `POST` | `/api/somiod`                       | Create a new application. |
-| `POST` | `/api/somiod/{application}`         | Create a container under the given application. |
-| `PUT`  | `/api/somiod/{application}`         | Refresh an application (updates its `creation-datetime`). |
-| `DELETE` | `/api/somiod/{application}`       | Delete an application. |
-| `GET` / `POST` / `PUT` / `DELETE` | `/api/somiod/{application}/{container}[/subs/{subscription}]` | Same operations on containers, content-instances and subscriptions. |
+### Prerequisites
+
+- Windows operating system
+- Visual Studio with ASP.NET and desktop development tools
+- .NET Framework 4.8 development tools
+- Microsoft SQL Server LocalDB or a compatible SQL Server instance
+- An MQTT broker accessible on TCP port 1883
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/josebranco13/somiod-iot-middleware.git
+cd somiod-iot-middleware
+```
+
+### 2. Open the Solution
+
+Open `ProjetoIs.sln` in Visual Studio.
+
+Restore the NuGet packages required by the solution.
+
+### 3. Configure the Database
+
+The Web API uses SQL Server for persistent storage.
+
+The repository provides the following SQL scripts:
+
+1. `application.sql`
+2. `container.sql`
+3. `content-instance.sql`
+4. `subscription.sql`
+
+Execute the scripts in this order when initializing
+a new database.
+
+Verify that the connection string in
+`ProjetoIs/Web.config` points to the database
+being used by the application.
+
+### 4. Start the Web API
+
+Run the `ProjetoIs` web application using IIS Express.
+
+The documented development address is:
+
+`http://localhost:58066`
+
+The assigned port may differ depending on the
+Visual Studio configuration.
+
+### 5. Configure the MQTT Broker
+
+Start a local MQTT broker using port `1883`.
+
+The demonstration Subscriber is configured to
+connect to `localhost:1883`.
+
+### 6. Run the Clients
+
+Start the `SomiodPublisher` application from
+the `TestApplications` project.
+
+Then start the `SomiodSubscriber` application.
+
+### 7. Test the Workflow
+
+1. Create an Application.
+2. Create a Container inside the Application.
+3. Create an MQTT Subscription.
+4. Publish a Content Instance.
+5. Verify the notification in the Subscriber.
+6. Observe the simulated device state.
+7. Check the generated XML notification record.
+```
+
+
+## 🔌 REST API Reference
+
+All routes use the `/api/somiod` prefix.
+
+The API is configured to run at
+`http://localhost:58066` using IIS Express.
+
+### Resource Operations
+
+| Resource | Method | Endpoint | Description |
+|---|---|---|---|
+| Applications | GET | `/api/somiod` | Discover resources using the required `somiod-discovery` header |
+| Applications | POST | `/api/somiod` | Create an application |
+| Applications | GET | `/api/somiod/{app}` | Retrieve an application or discover child resources |
+| Applications | PUT | `/api/somiod/{app}` | Update the application's timestamp |
+| Applications | DELETE | `/api/somiod/{app}` | Delete an application |
+| Containers | POST | `/api/somiod/{app}` | Create a container |
+| Containers | GET | `/api/somiod/{app}/{container}` | Retrieve a container or discover its children |
+| Containers | PUT | `/api/somiod/{app}/{container}` | Update the parent application reference |
+| Containers | DELETE | `/api/somiod/{app}/{container}` | Delete a container |
+| Content Instances | POST | `/api/somiod/{app}/{container}` | Create a content instance |
+| Content Instances | GET | `/api/somiod/{app}/{container}/{ci}` | Retrieve a content instance |
+| Content Instances | DELETE | `/api/somiod/{app}/{container}/{ci}` | Delete a content instance |
+| Subscriptions | POST | `/api/somiod/{app}/{container}` | Create a subscription |
+| Subscriptions | GET | `/api/somiod/{app}/{container}/subs/{sub}` | Retrieve a subscription |
+| Subscriptions | DELETE | `/api/somiod/{app}/{container}/subs/{sub}` | Delete a subscription |
+
+### Resource Discovery
+
+SOMIOD implements resource discovery through the
+custom `somiod-discovery` HTTP header.
+
+Supported resource types:
+
+- `application`
+- `container`
+- `content-instance`
+- `subscription`
+
+Example:
+
+```bash
+curl -H "somiod-discovery: application" \
+  http://localhost:58066/api/somiod
+```
+
+The response contains resource paths matching
+the specified resource type.
+
+> **Note:** The discovery header is required for
+> `GET /api/somiod`. On supported resource-specific
+> GET endpoints, its presence selects discovery
+> instead of returning the resource details.
+
 
 ### `somiod-discovery` header
 
@@ -123,6 +336,23 @@ somiod-discovery: subscription
 ```
 
 This lets clients walk the tree using a single, predictable URL shape.
+
+---
+
+### Notification Processing
+
+SOMIOD generates JSON notifications when supported
+content-instance events occur.
+
+Depending on the subscription endpoint, notifications
+are delivered through HTTP webhooks or MQTT.
+
+The SomiodSubscriber client receives MQTT notifications
+and stores validated XML records locally.
+
+For content-instance creation events, it also retrieves
+the corresponding resource and updates the simulated
+device interface.
 
 ---
 
@@ -173,9 +403,13 @@ A container is created with `POST /api/somiod/{application}` and is parented to 
 
 ![Create container](img/create_cont.png)
 
-### Update / delete a container
+### Update or Delete a Container
 
-Mutations on a container update its `creation-datetime` and remove the row respectively.
+The Publisher allows users to update a container's parent
+application or delete the selected container.
+
+The update operation modifies the container's
+`application-resource-name` field.
 
 ![Update container](img/updt_container.png)
 ![Delete container](img/delete_cont.png)
@@ -192,7 +426,7 @@ A subscription needs a parent container, a name, an event filter (`Creation`, `D
 
 ![Create subscription](img/create_subs.png)
 
-### Publishing to a real IoT device
+### Smart-Home Device Simulation
 
 When the publisher is aimed at a "light" container, the right-hand panel exposes a brightness slider that publishes percentage values straight to SOMIOD — these get fanned out as notifications to any subscribed endpoint (e.g. the `SomiodSubscriber`).
 
@@ -202,15 +436,19 @@ When the publisher is aimed at a "light" container, the right-hand panel exposes
 
 ## 📡 SomiodSubscriber (WinForms client)
 
-`SomiodSubscriber/Form1.cs` connects to `localhost:1883` and subscribes to the wildcard topic `api/somiod/#`. For every received notification it:
+The `SomiodSubscriber` Windows Forms application connects
+to the MQTT broker and subscribes to `api/somiod/#`.
 
-1. Logs the event.
-2. Calls `GET` on the notification's `resourcePath` to fetch the full content-instance.
-3. Parses the `content.value` and dispatches the command to the matching simulated device (door open/close, brightness %, blind position).
-4. Updates the on-screen state image (door open/closed, brightness levels, blind positions).
-5. Persists each notification as validated XML through `NotificationXmlService`.
+Received notifications are processed as follows:
 
-This is what closes the loop: **Publisher → SOMIOD → Notification → Subscriber → device**.
+1. Parse the incoming MQTT notification.
+2. Validate and save the notification as XML using an XSD schema.
+3. For content-instance creation events, retrieve the corresponding resource through the REST API.
+4. Extract the device command from the resource content.
+5. Update the simulated device state and its graphical representation.
+
+Deletion notifications can be received and recorded, but
+they do not trigger simulated device actions.
 
 ---
 
@@ -231,13 +469,63 @@ The connection string is read from `ProjetoIs.Properties.Settings.ConnectionStri
 
 - **ASP.NET Web API** on **.NET Framework 4.8** with attribute routing (`config.MapHttpAttributeRoutes()`).
 - **SQL Server** with hand-written `SqlCommand` / `SqlDataReader` code in the controllers.
-- **Newtonsoft.Json** for JSON serialization (snake_case property names).
+- **Newtonsoft.Json** for JSON serialization and deserialization, including resource properties represented with hyphen-separated JSON names.
 - **`uPLibrary.Networking.M2Mqtt`** for publishing notifications to MQTT brokers.
 - **Windows Forms** for both the publisher and subscriber demo clients.
 - **RestSharp** for HTTP calls from the publisher forms (used in addition to `HttpClient`).
 
 ---
 
-## 👥 Author
 
-- José Branco 
+## 🔐 Security Considerations
+
+> ⚠️ **Laboratory Environment**
+>
+> SOMIOD was developed for educational and controlled
+> laboratory use.
+>
+> The documented configuration uses local HTTP services
+> and MQTT communication without TLS.
+>
+> The application should not be exposed directly to
+> untrusted networks without additional security controls.
+>
+> A production deployment would require appropriate
+> authentication, authorization, secure transport,
+> and configuration management.
+
+---
+
+## ⚠️ Known Limitations
+
+- Smart-home devices are simulated through Windows Forms interfaces.
+- The documented environment relies on local API, database, and MQTT services.
+- The published SQL schema accepts subscription event filters `1` and `2`, but not the combined value `3` accepted by the API.
+- The Subscriber updates simulated device states only for content-instance creation notifications.
+- The system has not been validated as a production-ready IoT platform.
+
+
+---
+
+
+## 👨‍💻 Author
+
+**José Branco**
+
+Computer Science Engineering Student
+
+GitHub: [josebranco13](https://github.com/josebranco13)
+
+This repository documents an academic project focused on
+IoT interoperability, REST API development, relational
+database integration, and event-driven communication.
+
+
+---
+
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+See the [LICENSE](LICENSE) file for details.
